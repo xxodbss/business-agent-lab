@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Margin Calculator</title>
+<style>
+  :root {
+    --bg: #f6f6f4;
+    --card: #ffffff;
+    --text: #1d1d1b;
+    --muted: #6b6b66;
+    --border: #dddcd6;
+    --accent: #2f6f4f;
+    --bad: #b3261e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #20201e;
+      --text: #ecebe6;
+      --muted: #9b9a93;
+      --border: #3a3935;
+      --accent: #7cc49b;
+      --bad: #f2877f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 440px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 16px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .modes { display: flex; gap: 8px; margin-bottom: 20px; }
+  .modes button {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .modes button[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--card);
+  }
+  label { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 4px; }
+  .field { margin-bottom: 16px; }
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .results { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+  .row { display: flex; justify-content: space-between; padding: 4px 0; }
+  .row span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .row.main span:last-child { font-size: 1.3rem; color: var(--accent); }
+  .error { color: var(--bad); font-size: 0.9rem; min-height: 1.4em; margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Margin Calculator</h1>
+  <div class="card">
+    <div class="modes" role="group" aria-label="Calculation mode">
+      <button type="button" data-mode="margin" aria-pressed="true">Set margin → get price</button>
+      <button type="button" data-mode="price" aria-pressed="false">Set price → get margin</button>
+    </div>
+
+    <div class="field">
+      <label for="cost">Cost (₩)</label>
+      <input id="cost" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 10000">
+    </div>
+    <div class="field" id="marginField">
+      <label for="margin">Target margin (%)</label>
+      <input id="margin" type="number" inputmode="decimal" min="0" max="99.99" step="0.1" placeholder="e.g. 30">
+    </div>
+    <div class="field" id="priceField" hidden>
+      <label for="price">Selling price (₩)</label>
+      <input id="price" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 15000">
+    </div>
+
+    <div class="results">
+      <div class="row main"><span id="mainLabel">Selling price</span><span id="mainValue">–</span></div>
+      <div class="row"><span>Profit per unit</span><span id="profit">–</span></div>
+      <div class="row"><span>Markup on cost</span><span id="markup">–</span></div>
+      <p class="error" id="error"></p>
+    </div>
+  </div>
+</main>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const won = new Intl.NumberFormat("en-US", { style: "currency", currency: "KRW", maximumFractionDigits: 0 });
+  const pct = (n) => n.toFixed(1) + "%";
+  let mode = "margin";
+
+  document.querySelectorAll(".modes button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      mode = btn.dataset.mode;
+      document.querySelectorAll(".modes button").forEach((b) =>
+        b.setAttribute("aria-pressed", String(b === btn)));
+      $("marginField").hidden = mode !== "margin";
+      $("priceField").hidden = mode !== "price";
+      $("mainLabel").textContent = mode === "margin" ? "Selling price" : "Margin";
+      calc();
+    });
+  });
+
+  ["cost", "margin", "price"].forEach((id) => $(id).addEventListener("input", calc));
+
+  function show(main, profit, markup, error = "") {
+    $("mainValue").textContent = main;
+    $("profit").textContent = profit;
+    $("markup").textContent = markup;
+    $("error").textContent = error;
+  }
+
+  function calc() {
+    const cost = parseFloat($("cost").value);
+    if (isNaN(cost)) return show("–", "–", "–");
+    if (cost <= 0) return show("–", "–", "–", "Cost must be greater than 0.");
+
+    let price;
+    if (mode === "margin") {
+      const m = parseFloat($("margin").value);
+      if (isNaN(m)) return show("–", "–", "–");
+      if (m < 0 || m >= 100) return show("–", "–", "–", "Margin must be at least 0% and below 100%.");
+      price = cost / (1 - m / 100);
+      const profit = price - cost;
+      show(won.format(price), won.format(profit), pct((profit / cost) * 100));
+    } else {
+      price = parseFloat($("price").value);
+      if (isNaN(price)) return show("–", "–", "–");
+      if (price <= 0) return show("–", "–", "–", "Price must be greater than 0.");
+      const profit = price - cost;
+      const warn = profit < 0 ? "Price is below cost, so you lose money on each sale." : "";
+      show(pct((profit / price) * 100), won.format(profit), pct((profit / cost) * 100), warn);
+    }
+  }
+</script>
+</body>
+</html>
