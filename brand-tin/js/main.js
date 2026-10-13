@@ -298,7 +298,7 @@ for (const input of [$('#file-camera'), $('#file-album')]) {
 
 $('#demo-btn').addEventListener('click', async () => {
   sheet.hidden = true;
-  await document.fonts.load('150px "Nanum Pen Script"').catch(() => {});
+  await document.fonts.load('700 110px "Pretendard Variable"').catch(() => {});
   const { canvas, name } = makeDemo();
   const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.86));
   // 견본은 지금 보고 있는 지도 근처 아무 곳에 둔다

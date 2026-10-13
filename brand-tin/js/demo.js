@@ -1,13 +1,13 @@
 // 사진 없이 흐름을 시험해볼 수 있는 가짜 가게 간판
 const SHOPS = [
-  { name: '망원 베이커리', wall: '#efe3cc', sign: '#7a3b22', ink: '#f6ead2', font: 'serif', awning: ['#7a3b22', '#efe3cc'] },
-  { name: '책방 오늘', wall: '#2f4a3a', sign: '#e9e1cf', ink: '#2f4a3a', font: 'serif', awning: null },
-  { name: '꽃집 봄날', wall: '#f4d9d4', sign: '#ffffff', ink: '#d0526b', font: 'Nanum Pen Script', awning: ['#d0526b', '#ffffff'] },
-  { name: 'COFFEE 한잔', wall: '#1d1d1f', sign: '#1d1d1f', ink: '#f2c94c', font: 'sans-serif', awning: null },
-  { name: '동네 철물', wall: '#d8d2c4', sign: '#1f5fa8', ink: '#ffffff', font: 'sans-serif', awning: ['#1f5fa8', '#d8d2c4'] },
-  { name: '레코드 숲', wall: '#e85d3a', sign: '#f7e8c8', ink: '#2b2b2b', font: 'serif', awning: null },
-  { name: '국수 공방', wall: '#f3efe6', sign: '#2b2b2b', ink: '#f3efe6', font: 'serif', awning: ['#b23a2e', '#f3efe6'] },
-  { name: '문구 하나', wall: '#ffd84d', sign: '#ffffff', ink: '#2a5bd7', font: 'Nanum Pen Script', awning: null },
+  { name: '망원 베이커리', wall: '#efe3cc', sign: '#7a3b22', ink: '#f6ead2', weight: 800, awning: ['#7a3b22', '#efe3cc'] },
+  { name: '책방 오늘', wall: '#2f4a3a', sign: '#e9e1cf', ink: '#2f4a3a', weight: 800, awning: null },
+  { name: '꽃집 봄날', wall: '#f4d9d4', sign: '#ffffff', ink: '#d0526b', weight: 300, awning: ['#d0526b', '#ffffff'] },
+  { name: 'COFFEE 한잔', wall: '#1d1d1f', sign: '#1d1d1f', ink: '#f2c94c', weight: 600, awning: null },
+  { name: '동네 철물', wall: '#d8d2c4', sign: '#1f5fa8', ink: '#ffffff', weight: 600, awning: ['#1f5fa8', '#d8d2c4'] },
+  { name: '레코드 숲', wall: '#e85d3a', sign: '#f7e8c8', ink: '#2b2b2b', weight: 800, awning: null },
+  { name: '국수 공방', wall: '#f3efe6', sign: '#2b2b2b', ink: '#f3efe6', weight: 800, awning: ['#b23a2e', '#f3efe6'] },
+  { name: '문구 하나', wall: '#ffd84d', sign: '#ffffff', ink: '#2a5bd7', weight: 300, awning: null },
 ];
 
 let next = Math.floor(Math.random() * SHOPS.length);
@@ -35,8 +35,7 @@ export function makeDemo() {
   ctx.fillStyle = shop.ink;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const size = shop.font === 'Nanum Pen Script' ? 150 : 110;
-  ctx.font = `${shop.font === 'serif' ? '700' : '600'} ${size}px ${shop.font === 'Nanum Pen Script' ? '"Nanum Pen Script"' : shop.font}`;
+  ctx.font = `${shop.weight} 110px "Pretendard Variable", Pretendard, sans-serif`;
   ctx.fillText(shop.name, 450, 292, 640);
   // 차양
   if (shop.awning) {

@@ -10,9 +10,8 @@
   --tape: rgba(233, 222, 194, 0.94);
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
-  --sans: 'IBM Plex Sans KR', system-ui, -apple-system, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --hand: 'Nanum Pen Script', cursive;
+  /* 모든 글자는 Pretendard. 예외가 필요한 곳은 따로 지정한다. */
+  --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -20,11 +19,12 @@
 
 html, body {
   margin: 0;
+  font-variant-numeric: tabular-nums;
   height: 100%;
   overflow: hidden;
   background: var(--table);
   color: var(--ink);
-  font-family: var(--sans);
+  font-family: var(--font);
   -webkit-user-select: none;
   user-select: none;
   overscroll-behavior: none;
@@ -68,9 +68,9 @@ input, textarea { font: inherit; -webkit-user-select: text; user-select: text; }
   height: fit-content;
   text-align: center;
   color: rgba(50, 54, 60, 0.7);
-  font-family: var(--hand);
-  font-size: 28px;
-  line-height: 1.25;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.5;
   pointer-events: none;
 }
 
@@ -151,14 +151,15 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
   border: 0;
   background: transparent;
   text-align: center;
-  font-family: var(--hand);
-  font-size: 46px;
-  line-height: 1;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: #2d2924;
   outline: none;
   position: relative;
 }
-.tape-date { font-family: var(--hand); font-size: 22px; color: #6b6156; position: relative; }
+.tape-date { font-size: 13px; font-weight: 500; color: #6b6156; position: relative; }
 .lid-count { margin: 0; font-size: 13px; color: rgba(40, 44, 50, 0.6); letter-spacing: .02em; }
 .lid-open {
   position: absolute;
@@ -304,7 +305,6 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
   border: 1px solid currentColor;
   border-color: rgba(127, 127, 127, 0.3);
   background: none;
-  font-family: var(--mono);
   font-size: 11px;
 }
 .swatch i { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
@@ -374,7 +374,6 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
 .spec-head {
   display: flex;
   justify-content: space-between;
-  font-family: var(--mono);
   font-size: 10px;
   letter-spacing: .14em;
   color: var(--paper-dim);
@@ -397,7 +396,6 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
 .card-back section { display: flex; flex-direction: column; gap: 8px; }
 .card-back h3 {
   margin: 0;
-  font-family: var(--mono);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: .14em;
@@ -418,7 +416,6 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
 .pending { color: #b0a79b; font-style: italic; }
 .stamp {
   display: inline-block;
-  font-family: var(--mono);
   font-weight: 500;
   color: #b8433a;
   border: 1.5px solid #b8433a;
@@ -501,7 +498,7 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
     repeating-linear-gradient(90deg, transparent 0 39px, rgba(107, 97, 86, 0.08) 39px 40px),
     #ece7dd;
 }
-.map-empty code { font-family: var(--mono); font-size: 12px; background: rgba(0, 0, 0, 0.06); padding: 1px 5px; border-radius: 4px; }
+.map-empty code { font-size: 12px; background: rgba(0, 0, 0, 0.06); padding: 1px 5px; border-radius: 4px; }
 .map-head {
   position: absolute;
   top: calc(var(--safe-t) + 12px);
@@ -516,9 +513,11 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
 .map-head h1 {
   margin: 0;
   padding: 2px 14px 0;
-  font-family: var(--hand);
-  font-weight: 400;
-  font-size: 32px;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  padding-top: 6px;
+  padding-bottom: 6px;
   color: #2d2924;
   background: var(--tape);
   transform: rotate(-2deg);
@@ -575,12 +574,12 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
   background: linear-gradient(135deg, #f1f2f4, #aeb3ba 45%, #eceef1 60%, #9da2a9);
   box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.8), inset 0 0 0 4px rgba(120, 125, 132, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.strip-label { font-family: var(--hand); font-size: 22px; line-height: 1; }
-.strip-tin b { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--paper-dim); }
+.strip-label { font-size: 15px; font-weight: 600; line-height: 1; }
+.strip-tin b { font-size: 12px; font-weight: 500; color: var(--paper-dim); }
 
 /* 지도 위 마커 */
 .marker-host { background: none; border: 0; }
-.leaflet-container { font-family: var(--sans); background: #ece7dd; }
+.leaflet-container { font-family: var(--font); background: #ece7dd; }
 /* 지도를 빛바랜 종이 톤으로 */
 .leaflet-tile-pane { filter: grayscale(0.55) sepia(0.4) contrast(0.92) brightness(1.04); }
 .leaflet-control-attribution {
@@ -607,8 +606,10 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
   margin-top: -14px;
   padding: 1px 8px 0;
   background: var(--tape);
-  font-family: var(--hand);
-  font-size: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  padding-top: 3px;
+  padding-bottom: 3px;
   color: #2d2924;
   transform: rotate(-3deg);
   white-space: nowrap;
@@ -623,7 +624,6 @@ body:not(.open) #add-btn { opacity: 0; pointer-events: none; }
   border-radius: 11px;
   background: #2b2723;
   color: var(--ink);
-  font-family: var(--mono);
   font-size: 11px;
   font-weight: 500;
   line-height: 22px;
