@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#2a2420">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>브랜드 틴</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app">
+    <canvas id="tin"></canvas>
+
+    <div class="topbar">
+      <button class="chip chip-btn" id="tin-chip">‹ 지도 · <span id="chip-label">우리 동네</span> <span id="chip-count">0</span></button>
+      <button class="chip chip-btn" id="close-btn">뚜껑 닫기</button>
+    </div>
+
+    <p id="empty-hint" class="empty-hint" hidden>오른쪽 아래 <b>+</b> 를 눌러<br>첫 조각을 담아보세요</p>
+    <button id="add-btn" class="fab" aria-label="조각 추가">+</button>
+
+    <!-- 닫힌 뚜껑 -->
+    <section id="lid" class="lid">
+      <button class="chip chip-btn lid-back" id="lid-back">‹ 지도</button>
+      <div class="lid-face">
+        <div class="tape">
+          <input id="label-input" class="tape-input" maxlength="12" aria-label="틴 이름" value="우리 동네">
+          <span id="label-date" class="tape-date"></span>
+        </div>
+        <p class="lid-count" id="lid-count"></p>
+      </div>
+      <button id="open-btn" class="lid-open">뚜껑 열기</button>
+    </section>
+  </main>
+
+  <!-- 첫 화면: 지도 -->
+  <section id="map-screen" class="map-screen">
+    <div id="map" class="map"></div>
+    <div id="map-empty" class="map-empty" hidden>
+      <p>지도를 불러오지 못했어요.<br>인터넷 연결을 확인해주세요.</p>
+    </div>
+    <header class="map-head">
+      <h1>브랜드 도감</h1>
+      <span id="map-total" class="chip"></span>
+    </header>
+    <button id="locate-btn" class="map-locate" aria-label="내 위치">◎</button>
+    <nav class="tin-strip" id="tin-strip" aria-label="동네 틴"></nav>
+    <button id="map-add" class="fab" aria-label="조각 추가">+</button>
+  </section>
+
+  <!-- 추가 시트 -->
+  <div id="add-sheet" class="sheet-backdrop" hidden>
+    <div class="sheet">
+      <label class="sheet-btn">사진 찍기<input type="file" accept="image/*" capture="environment" id="file-camera" hidden></label>
+      <label class="sheet-btn">앨범에서 고르기<input type="file" accept="image/*" id="file-album" hidden></label>
+      <button class="sheet-btn sub" id="demo-btn">견본 조각 넣어보기</button>
+      <button class="sheet-btn cancel" data-close>취소</button>
+    </div>
+  </div>
+
+  <!-- 3:4 크롭 -->
+  <section id="crop" class="screen" hidden>
+    <header class="screen-head">
+      <button data-action="cancel">취소</button>
+      <h2>3:4로 맞추기</h2>
+      <button data-action="next" class="accent">다음</button>
+    </header>
+    <div class="crop-stage"><div class="crop-frame"><img id="crop-img" alt=""></div></div>
+    <p class="screen-tip">드래그로 위치를, 두 손가락으로 크기를 맞춰요</p>
+  </section>
+
+  <!-- 한지 확인 -->
+  <section id="confirm" class="screen" hidden>
+    <header class="screen-head">
+      <button data-action="back">다시 자르기</button>
+      <h2>한지에 인쇄했어요</h2>
+      <button data-action="cancel">취소</button>
+    </header>
+    <div class="confirm-body">
+      <div class="confirm-piece" id="confirm-piece"></div>
+      <input id="confirm-name" class="field" placeholder="가게 이름 (선택)" maxlength="30">
+      <button id="confirm-loc" class="loc-row" type="button"></button>
+      <div class="palette" id="confirm-palette"></div>
+    </div>
+    <footer class="screen-foot">
+      <button data-action="drop" class="primary">그대로 넣기</button>
+    </footer>
+  </section>
+
+  <!-- 위치 직접 고르기 -->
+  <section id="pick" class="screen" hidden>
+    <header class="screen-head">
+      <button data-action="cancel">취소</button>
+      <h2>가게 위치 고르기</h2>
+      <button data-action="ok" class="accent">이 위치로</button>
+    </header>
+    <div class="pick-stage">
+      <div id="pick-map" class="map"></div>
+      <div class="pick-cross" aria-hidden="true"></div>
+    </div>
+    <p class="screen-tip">지도를 움직여 가게 위치에 맞춰요</p>
+  </section>
+
+  <!-- 스펙시트 -->
+  <div id="spec" class="modal" hidden>
+    <button class="modal-close" data-close aria-label="닫기">✕</button>
+    <div class="card" id="spec-card">
+      <div class="card-inner">
+        <div class="card-face card-front" id="spec-front"></div>
+        <div class="card-face card-back" id="spec-back"></div>
+      </div>
+    </div>
+    <p class="card-tip">카드를 탭하면 뒤집혀요</p>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
